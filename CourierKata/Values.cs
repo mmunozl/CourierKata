@@ -13,6 +13,8 @@
 		public const int MEDIUM_PARCEL_COST = 8;
 		public const int LARGE_PARCEL_COST = 15;
 		public const int XL_PARCEL_COST = 25;
+
+		public const int SPEEDY_SHIPPING_COST_FACTOR = 2;
 		#endregion
 	}
 }

@@ -11,6 +11,8 @@ namespace CourierKata.Models
 			ParcelsCosts = new Dictionary<Parcel, int>();
 		}
 
+		public bool SpeedyShipping { get; internal set; }
+		public int SpeedyShippingCost { get; internal set; }
 		public int TotalCost { get; internal set; }
 		public IDictionary<Parcel, int> ParcelsCosts { get; private set; }
 		public string Invoice { get
@@ -31,6 +33,7 @@ namespace CourierKata.Models
             {
 				invoice.AppendLine($"Parcel: {parcel.Key.Size}, Cost: {parcel.Value}");
             }
+			invoice.AppendLine($"Speedy Shipping Cost: {SpeedyShippingCost}");
 			return invoice.ToString();
         }
 	}

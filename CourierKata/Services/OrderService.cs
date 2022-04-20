@@ -38,19 +38,32 @@ namespace CourierKata.Services
 				case Parcel.ParcelSize.XL:
 					return Values.XL_PARCEL_COST;
 				default:
-					throw new ArgumentException("Package size is not in the correct format.");
+					throw new ArgumentException("Parcel size is not in the correct format.");
 			}
 		}
-
 		private void CalculateTotalCost(Order order)
 		{
-			order.TotalCost = order.ParcelsCosts.Values.Sum();
+			var parcelsCost = order.ParcelsCosts.Values.Sum();
+			if (order.SpeedyShipping)
+			{
+				order.SpeedyShippingCost = parcelsCost;
+				order.TotalCost = parcelsCost * Values.SPEEDY_SHIPPING_COST_FACTOR;
+			}
+			else
+			{
+				order.TotalCost = parcelsCost;
+			}
 		}
 
 		public Order CreateOrder(IEnumerable<Parcel> parcels)
 		{
+			return CreateOrder(parcels, false);
+		}
+		public Order CreateOrder(IEnumerable<Parcel> parcels, bool speedyShipping)
+		{
 			var order = new Order();
 			AddParcelsTo(parcels, order);
+			order.SpeedyShipping = speedyShipping;
 			CalculateTotalCost(order);
 			return order;
 		}

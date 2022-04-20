@@ -5,6 +5,8 @@
 		public int Height { get; private set; }
 		public int Width { get; private set; }
 		public int Length { get; private set; }
+		public int Weight { get; private set; }
+		public int OverWeight { get; private set; }
 		public ParcelSize Size { get; private set; }
 		public enum ParcelSize
 		{
@@ -28,6 +30,13 @@
 
 				return this;
 			}
+			public ParcelBuilder SetWeight(int weight)
+            {
+				// TODO: Add checks of inputs, values can not be null, zero or negative.
+				_parcel.Weight = weight;
+				SetOverWeight();
+				return this;
+			}
 			private void SetSize()
 			{
 				if (_parcel.Height > Values.XL_LOWER_LIMIT || _parcel.Width > Values.XL_LOWER_LIMIT || _parcel.Length > Values.XL_LOWER_LIMIT)
@@ -46,6 +55,30 @@
 				{
 					_parcel.Size = ParcelSize.Large;
 				}
+			}
+			private void SetOverWeight()
+			{
+                // TODO: Not checking dimensions were set before.
+                switch (_parcel.Size)
+                {
+					case ParcelSize.Small:
+						if (_parcel.Weight > Values.SMALL_WEIGHT_LIMIT)
+							_parcel.OverWeight = _parcel.Weight - Values.SMALL_WEIGHT_LIMIT;
+						break;
+					case ParcelSize.Medium:
+						if (_parcel.Weight > Values.MEDIUM_WEIGHT_LIMIT)
+							_parcel.OverWeight = _parcel.Weight - Values.MEDIUM_WEIGHT_LIMIT;
+						break;
+					case ParcelSize.Large:
+						if (_parcel.Weight > Values.LARGE_WEIGHT_LIMIT)
+							_parcel.OverWeight = _parcel.Weight - Values.LARGE_WEIGHT_LIMIT;
+						break;
+					case ParcelSize.XL:
+						if (_parcel.Weight > Values.XL_WEIGHT_LIMIT)
+							_parcel.OverWeight = _parcel.Weight - Values.XL_WEIGHT_LIMIT;
+						break;
+				}
+
 			}
 		}
 	}

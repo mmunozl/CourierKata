@@ -25,21 +25,30 @@ namespace CourierKata.Services
 
 		private int CalculateParcelCost(Parcel parcel)
 		{
+			var totalParcelCost = 0;
+			if (parcel.OverWeight > 0)
+				totalParcelCost += parcel.OverWeight * Values.OVERWEIGHT_COST;
+
 			// TODO: move this to a dictionary or a configuration so I don't have to
 			// modify the code each time the params for calc the cost are modified.
 			switch (parcel.Size)
 			{
 				case Parcel.ParcelSize.Small:
-					return Values.SMALL_PARCEL_COST;
+					totalParcelCost += Values.SMALL_PARCEL_COST;
+					break;
 				case Parcel.ParcelSize.Medium:
-					return Values.MEDIUM_PARCEL_COST;
+					totalParcelCost +=  Values.MEDIUM_PARCEL_COST;
+					break;
 				case Parcel.ParcelSize.Large:
-					return Values.LARGE_PARCEL_COST;
+					totalParcelCost +=  Values.LARGE_PARCEL_COST;
+					break;
 				case Parcel.ParcelSize.XL:
-					return Values.XL_PARCEL_COST;
+					totalParcelCost +=  Values.XL_PARCEL_COST;
+					break;
 				default:
 					throw new ArgumentException("Parcel size is not in the correct format.");
 			}
+			return totalParcelCost;
 		}
 		private void CalculateTotalCost(Order order)
 		{

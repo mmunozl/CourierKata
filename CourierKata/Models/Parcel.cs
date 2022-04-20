@@ -7,6 +7,7 @@
 		public int Length { get; private set; }
 		public int Weight { get; private set; }
 		public int OverWeight { get; private set; }
+		public bool IsHeavyParcel { get; private set; }
 		public ParcelSize Size { get; private set; }
 		public enum ParcelSize
 		{
@@ -58,27 +59,13 @@
 			}
 			private void SetOverWeight()
 			{
-                // TODO: Not checking dimensions were set before.
-                switch (_parcel.Size)
-                {
-					case ParcelSize.Small:
-						if (_parcel.Weight > Values.SMALL_WEIGHT_LIMIT)
-							_parcel.OverWeight = _parcel.Weight - Values.SMALL_WEIGHT_LIMIT;
-						break;
-					case ParcelSize.Medium:
-						if (_parcel.Weight > Values.MEDIUM_WEIGHT_LIMIT)
-							_parcel.OverWeight = _parcel.Weight - Values.MEDIUM_WEIGHT_LIMIT;
-						break;
-					case ParcelSize.Large:
-						if (_parcel.Weight > Values.LARGE_WEIGHT_LIMIT)
-							_parcel.OverWeight = _parcel.Weight - Values.LARGE_WEIGHT_LIMIT;
-						break;
-					case ParcelSize.XL:
-						if (_parcel.Weight > Values.XL_WEIGHT_LIMIT)
-							_parcel.OverWeight = _parcel.Weight - Values.XL_WEIGHT_LIMIT;
-						break;
-				}
+				// We only consider a parcel over weight when it's over the (previously) XL weight limit
+				// and will be treated as a heavy parcel.
+				if (Values.XL_WEIGHT_LIMIT < _parcel.Weight)
+					_parcel.IsHeavyParcel = true;
 
+				if (_parcel.Weight > Values.HEAVY_PARCEL_LIMIT)
+					_parcel.OverWeight = _parcel.Weight - Values.HEAVY_PARCEL_LIMIT;
 			}
 		}
 	}

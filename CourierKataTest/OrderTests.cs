@@ -100,22 +100,25 @@ namespace CourierKataTest
 		}
 
 		[Test]
-		public void Order_With_OverWeight_Packages_Charges_Expected_Extra_Cost()
-        {
+		public void Order_With_Heavy_Parcel_Has_Expected_Cost()
+		{
+			int weight = 53;
+			int expectedCost = 53;
+
 			// Arrange
-			var smallParcel = new Parcel.ParcelBuilder()
+			var overweightParcel = new Parcel.ParcelBuilder()
 				.SetDimensions(8, 8, 8)
-				.SetWeight(5)
+				.SetWeight(weight)
 				.Build();
-			int expectedCost = 11;
 			ICollection<Parcel> parcels = new List<Parcel>();
-			parcels.Add(smallParcel);
+			parcels.Add(overweightParcel);
 
 			// Act
 			var order = _orderService.CreateOrder(parcels);
 
 			// Assert
 			Assert.AreEqual(order.TotalCost, expectedCost);
+
 		}
 		// TODO: Test that speedy shipping comes independently in the invoice.
 		// TODO: Take common parts of the tests as setup

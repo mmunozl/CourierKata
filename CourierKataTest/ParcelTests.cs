@@ -18,11 +18,11 @@ namespace CourierKataTest
 			Assert.AreEqual(createdParcel.Size, expectedSize);
 		}
 
-		[TestCase(8, 7, 9, 2, 1)]
-		public void Parcel_Created_With_Weight_Over_Limit_Is_OverWeight(int length, int width, int height, int weight, int expectedOverweight)
+		[TestCase(53, 3)]
+		public void Parcel_Created_With_Weight_Over_Limit_Is_OverWeight(int weight, int expectedOverweight)
 		{
 			var createdParcel = new Parcel.ParcelBuilder()
-				.SetDimensions(height, width, length)
+				.SetDimensions(8, 8, 8)
 				.SetWeight(weight)
 				.Build();
 

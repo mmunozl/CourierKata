@@ -120,6 +120,52 @@ namespace CourierKataTest
 			Assert.AreEqual(order.TotalCost, expectedCost);
 
 		}
+
+		[Test]
+		public void Order_With_Multiple_Packages_Applies_Expected_Discount()
+        {
+			// Arrange
+
+			// Add 10 parcels to the parcel list.
+			ICollection<Parcel> parcels = new List<Parcel>();
+			for (int i = 0; i < 5; i++)
+            {
+				parcels.Add
+				(
+					new Parcel.ParcelBuilder()
+					.SetDimensions(8, 8, 8)
+					.SetWeight(1)
+					.Build()
+				);
+				parcels.Add
+				(
+					new Parcel.ParcelBuilder()
+						.SetDimensions(15, 15, 15)
+						.SetWeight(5)
+						.Build()
+				);
+			}
+
+			//  Expected discount: 2 mixed, 1 small, 1 medium.
+			//	 My order parcel setup:
+			//	    S M S M S M S M S M  (5S + 5M = 55$)
+			//	 My order expectations
+			//	    S M S M F M S F S F  (F = 1S + 2M = $19)
+			//	 If Small Costs $3 and Medium costs $8:
+			//	 The expected total cost is: $28
+			//	 The expected discount is: $36
+
+			var expectedTotalCost = 36;
+			var expectedDiscountCost = 19;
+
+			// Act
+			var order = _orderService.CreateOrder(parcels);
+
+			// Assert
+			Assert.That(order.DiscountTotal, Is.EqualTo(expectedDiscountCost));
+			Assert.That(order.TotalCost, Is.EqualTo(expectedTotalCost));
+		}
+
 		// TODO: Test that speedy shipping comes independently in the invoice.
 		// TODO: Take common parts of the tests as setup
 		// TODO: Add test cases that prove scenarios other than the 'happy path'.

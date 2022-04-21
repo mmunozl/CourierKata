@@ -16,13 +16,11 @@ namespace CourierKata.Services
 				AddParcelTo(parcel, order);
 			}
 		}
-
 		private void AddParcelTo(Parcel parcel, Order order)
 		{
 			var parcelCost = CalculateParcelCost(parcel);
 			order.ParcelsCosts.Add(parcel, parcelCost);
 		}
-
 		private int CalculateCostForSize(Parcel.ParcelSize size)
 		{
 			// TODO: move this to a dictionary or a configuration so I don't have to
@@ -56,20 +54,48 @@ namespace CourierKata.Services
 
 			return totalParcelCost;
 		}
+		private void CalculateFreeParcelsFromDiscounts(Order order)
+		{
+			int totalPackageCounter = 0;
+			int smallPackageCounter = 0;
+			int mediumPackageCounter = 0;
+
+			foreach (var parcel in order.ParcelsCosts)
+			{
+				totalPackageCounter++;
+				if (parcel.Key.Size == Parcel.ParcelSize.Small)
+					smallPackageCounter++;
+				if (parcel.Key.Size == Parcel.ParcelSize.Medium)
+					mediumPackageCounter++;
+
+				bool shouldApplyMixedDiscount = totalPackageCounter % 5 == 0;
+
+				bool shouldApplySmallDiscount = parcel.Key.Size == Parcel.ParcelSize.Small &&
+					smallPackageCounter > 0 && smallPackageCounter % 3 == 0;
+
+				bool shouldApplyMediumDiscount = parcel.Key.Size == Parcel.ParcelSize.Medium &&
+					mediumPackageCounter > 0 && mediumPackageCounter % 4 == 0;
+
+				if (shouldApplyMixedDiscount || shouldApplySmallDiscount || shouldApplyMediumDiscount)
+				{
+					order.FreeParcels.Add(parcel);
+				}
+			}
+		}
 		private void CalculateTotalCost(Order order)
 		{
+			var totalCost = 0;
 			var parcelsCost = order.ParcelsCosts.Values.Sum();
+			totalCost += parcelsCost;
 			if (order.SpeedyShipping)
 			{
 				order.SpeedyShippingCost = parcelsCost;
-				order.TotalCost = parcelsCost * Values.SPEEDY_SHIPPING_COST_FACTOR;
+				totalCost = totalCost * Values.SPEEDY_SHIPPING_COST_FACTOR;
 			}
-			else
-			{
-				order.TotalCost = parcelsCost;
-			}
+			var discount = order.FreeParcels.Values.Sum();
+			totalCost -= discount;
+			order.TotalCost = totalCost;
 		}
-
 		public Order CreateOrder(IEnumerable<Parcel> parcels)
 		{
 			return CreateOrder(parcels, false);
@@ -78,6 +104,7 @@ namespace CourierKata.Services
 		{
 			var order = new Order();
 			AddParcelsTo(parcels, order);
+			CalculateFreeParcelsFromDiscounts(order);
 			order.SpeedyShipping = speedyShipping;
 			CalculateTotalCost(order);
 			return order;
